@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "chart.name" .}}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "chart.name" .}}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "chart.name" .}}
+  template:
+    metadata:
+      labels:
+        app: {{ include "chart.name" .}}
+    spec:
+      containers:
+      - name: {{ include "chart.name" .}}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: metrics
+        resources:
+          limits:
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
+          requests:
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+        - name: root
+          mountPath: /rootfs
+          readOnly: true
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: root
+        hostPath:
+          path: /

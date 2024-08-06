@@ -1,0 +1,16 @@
+apiVersion: v2
+name: grafana
+version: 1.0.0
+dependencies:
+  - name: promtail
+    version: "0.0.1"
+    repository: ../promtail/
+  - name: node-exporter
+    version: "0.0.1"
+    repository: ../node-exporter/
+  - name: prometheus
+    version: "0.0.1"
+    repository: ../prometheus/
+  - name: loki
+    version: "0.0.1"
+    repository: ../loki/

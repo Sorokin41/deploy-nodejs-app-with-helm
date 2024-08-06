@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "chart.name" .}}-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce

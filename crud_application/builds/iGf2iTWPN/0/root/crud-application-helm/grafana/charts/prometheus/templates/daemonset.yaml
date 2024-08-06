@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "chart.name" .}}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "chart.name" .}}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "chart.name" .}}
+  template:
+    metadata:
+      labels:
+        app: {{ include "chart.name" .}}
+    spec:
+      containers:
+      - name: {{ include "chart.name" .}}
+        image: prom/prometheus:latest
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: {{ include "chart.name" .}}
+        volumeMounts:
+        - name: {{ include "chart.name" .}}-config
+          mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+      volumes:
+      - name: {{ include "chart.name" .}}-config
+        configMap:
+          name: {{ include "chart.name" .}}-config

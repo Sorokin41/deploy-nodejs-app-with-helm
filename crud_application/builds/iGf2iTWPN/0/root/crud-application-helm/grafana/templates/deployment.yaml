@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.name" .}}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "chart.name" .}}
+  template:
+    metadata:
+      labels:
+        app: {{ include "chart.name" .}}
+    spec:
+      initContainers:
+      - name: {{ include "chart.name" .}}-init
+        image: busybox
+        command: ["sh", "-c", "chown -R 472:472 /var/lib/grafana"]
+        volumeMounts:
+        - name: {{ include "chart.name" .}}-storage
+          mountPath: /var/lib/grafana
+      containers:
+      - name: {{ include "chart.name" .}}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        env:
+        - name:  GF_SECURITY_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "chart.name" .}}-secret
+              key: username
+        - name:  GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "chart.name" .}}-secret
+              key: password
+        volumeMounts:
+        - name: {{ include "chart.name" .}}-storage
+          mountPath: /var/lib/grafana
+      volumes:
+      - name: {{ include "chart.name" .}}-storage
+        persistentVolumeClaim:
+          claimName: {{ include "chart.name" .}}-pvc

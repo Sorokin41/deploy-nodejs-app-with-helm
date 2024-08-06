@@ -1,0 +1,12 @@
+namespace: my-app
+
+replicaCount: 1
+
+image:
+  repository: sorokin21/nodejs_test_crud-my_app
+  tag: latest
+
+service:
+  port: 4000
+  
+commitHash: 3d01d826255a649b7974fc1dda5b354514f2e2e8

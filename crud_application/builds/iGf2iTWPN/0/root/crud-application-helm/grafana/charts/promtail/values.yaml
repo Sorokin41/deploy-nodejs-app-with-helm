@@ -1,0 +1,10 @@
+namespace: monitoring
+
+replicaCount: 1
+
+image:
+  repository: grafana/promtail
+  tag: latest
+
+service:
+  port: 9080

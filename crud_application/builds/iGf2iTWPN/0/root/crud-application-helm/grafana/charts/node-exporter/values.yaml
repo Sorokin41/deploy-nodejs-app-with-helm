@@ -1,0 +1,18 @@
+namespace: monitoring
+
+replicaCount: 1
+
+image:
+  repository: quay.io/prometheus/node-exporter
+  tag: latest
+
+service:
+  port: 9100
+
+resources:
+  limits:
+    memory: 200Mi
+    cpu: 100m
+  requests:
+    memory: 100Mi
+    cpu: 50m

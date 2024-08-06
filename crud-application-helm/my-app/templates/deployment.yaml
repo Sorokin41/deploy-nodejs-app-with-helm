@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace:  {{ .Release.Namespace }}
+  annotations:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.myapp.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "chart.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-container
+          image: "{{ .Values.myapp.image.repository }}:{{ .Values.myapp.image.tag }}"
+          env:
+            - name: "commit"
+              value: {{.Values.myapp.commitHash }} 
+          ports:
+            - containerPort: {{ .Values.myapp.service.port }}

@@ -1,0 +1,10 @@
+namespace: monitoring
+
+replicaCount: 1
+
+image:
+  repository: grafana/grafana
+  tag: latest
+
+service:
+  port: 3000

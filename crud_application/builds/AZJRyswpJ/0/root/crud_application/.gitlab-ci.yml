@@ -1,0 +1,42 @@
+stages:
+  - gitlab-registry-build
+  - dockerhub-build
+  - update-helm-repo
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+# gitlab-registry-build:
+#   stage: gitlab-registry-build
+#   image: docker:19.03.12
+#   services:
+#     - docker:dind
+#   script:
+#     - echo "Building Docker image..."
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker build -t $IMAGE_TAG .
+#     - echo $IMAGE_TAG
+#     - docker push $IMAGE_TAG
+#   only:
+#     - main
+
+dockerhub-build:
+  stage: dockerhub-build
+  image: docker:19.03.12
+  services:
+    - docker:dind
+  script:
+    - echo "Building Docker image..."
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - docker build -t sorokin21/nodejs_test_crud-my_app:latest . 
+    - docker push sorokin21/nodejs_test_crud-my_app:latest
+  only:
+    - main
+
+update-helm-repo:
+  stage: update-helm-repo
+  script:
+   - curl -X POST --fail -F "token=$PIPELINE_TOKEN" -F "ref=main" -F "variables[commitHash]=$CI_COMMIT_SHA" "http://gitlab.example.com/api/v4/projects/3/trigger/pipeline"
+
+  only:
+    - main

@@ -1,0 +1,12 @@
+stages:
+  - deploy
+
+kubernetes-deploy:
+  stage: deploy
+  script:
+    - echo "Deploying using kubernetes..."
+    - kubectl config use-context minikube
+    - cd ./my-app && helm dependency update
+    - helm upgrade --install my-app . --namespace test --create-namespace --set myapp.commitHash=$commitHash
+  only: 
+    - main
